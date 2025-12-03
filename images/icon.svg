@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#2D5A9D"/>
+
+  <!-- Folder body -->
+  <path d="M24 42 L24 96 L88 96 L88 50 L54 50 L48 42 Z" fill="#F5C342" stroke="#E5A822" stroke-width="2"/>
+
+  <!-- Folder tab -->
+  <path d="M24 42 L48 42 L54 50 L24 50 Z" fill="#F5C342" stroke="#E5A822" stroke-width="2"/>
+
+  <!-- Arrow pointing to folder -->
+  <g fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2">
+    <!-- Arrow shaft -->
+    <rect x="70" y="62" width="32" height="8" rx="2"/>
+    <!-- Arrow head -->
+    <polygon points="98,54 114,66 98,78"/>
+  </g>
+
+  <!-- Plus symbol on folder -->
+  <g fill="#2D5A9D" stroke="none">
+    <rect x="50" y="68" width="20" height="4" rx="1"/>
+    <rect x="58" y="60" width="4" height="20" rx="1"/>
+  </g>
+</svg>

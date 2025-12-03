@@ -1,0 +1,85 @@
+{
+  "name": "copy-to",
+  "displayName": "Copy to",
+  "description": "Copy selected files/folders to a configurable destination from File Explorer context menu",
+  "version": "0.0.1",
+  "publisher": "laststance",
+  "license": "ISC",
+  "keywords": [
+    "copy",
+    "file",
+    "folder",
+    "explorer",
+    "context menu"
+  ],
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laststance/copy-to"
+  },
+  "homepage": "https://github.com/laststance/copy-to#readme",
+  "bugs": {
+    "url": "https://github.com/laststance/copy-to/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "images/icon.png",
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "copy-to.copyToDestination",
+        "title": "Copy to..."
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "copy-to.copyToDestination",
+          "when": "explorerResourceIsFolder || !explorerResourceIsRoot",
+          "group": "7_modification"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Copy to",
+      "properties": {
+        "copyTo.destinationPath": {
+          "type": "string",
+          "default": "",
+          "description": "The destination directory path for copied files. Supports ~ for home directory (e.g., ~/utils). Leave empty to be prompted each time."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "build": "node esbuild.config.mjs --production",
+    "watch": "node esbuild.config.mjs --watch",
+    "lint": "tsc --noEmit",
+    "prepare": "husky",
+    "prettier": "prettier --ignore-unknown --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.7.1",
+    "esbuild": "^0.27.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.23.0",
+  "lint-staged": {
+    "*": "prettier --ignore-unknown --write"
+  }
+}

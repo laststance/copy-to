@@ -1,0 +1,11 @@
+.vscode/**
+node_modules/**
+src/**
+*.ts
+!dist/**
+.gitignore
+tsconfig.json
+esbuild.config.mjs
+**/*.map
+.envrc
+pnpm-lock.yaml
