@@ -2,6 +2,8 @@
 
 A simple VSCode extension that adds a "Copy to..." option to the File Explorer context menu, allowing you to quickly copy files and folders to a configurable destination.
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/laststance.copy-to)](https://marketplace.visualstudio.com/items?itemName=laststance.copy-to)
+[![Open VSX](https://img.shields.io/open-vsx/v/laststance/copy-to)](https://open-vsx.org/extension/laststance/copy-to)
 ![VSCode](https://img.shields.io/badge/VSCode-^1.85.0-blue)
 ![License](https://img.shields.io/badge/license-ISC-green)
 
@@ -56,11 +58,11 @@ Then press `F5` in VSCode to launch the Extension Development Host.
 
 When a file with the same name already exists at the destination:
 
-| Option | Action |
-|--------|--------|
-| **Overwrite** | Replace the existing file with the new one |
-| **Skip** | Keep the existing file, skip copying this item |
-| **Cancel** | Stop the entire copy operation |
+| Option        | Action                                         |
+| ------------- | ---------------------------------------------- |
+| **Overwrite** | Replace the existing file with the new one     |
+| **Skip**      | Keep the existing file, skip copying this item |
+| **Cancel**    | Stop the entire copy operation                 |
 
 ## Configuration
 
@@ -68,8 +70,8 @@ Configure the extension in VSCode Settings (`Ctrl+,` or `Cmd+,`):
 
 ### Settings
 
-| Setting | Type | Default | Description |
-|---------|------|---------|-------------|
+| Setting                  | Type     | Default      | Description                        |
+| ------------------------ | -------- | ------------ | ---------------------------------- |
 | `copyTo.destinationPath` | `string` | `""` (empty) | Default destination directory path |
 
 ### Setting the Destination Path
@@ -90,13 +92,13 @@ Configure the extension in VSCode Settings (`Ctrl+,` or `Cmd+,`):
 
 ### Path Format Examples
 
-| Path | Description |
-|------|-------------|
-| `~/utils` | utils folder in your home directory |
-| `~/Desktop/backup` | backup folder on Desktop |
-| `/absolute/path/to/folder` | Absolute path |
-| `C:\Users\Name\Documents` | Windows absolute path |
-| *(empty)* | Prompt for destination each time |
+| Path                       | Description                         |
+| -------------------------- | ----------------------------------- |
+| `~/utils`                  | utils folder in your home directory |
+| `~/Desktop/backup`         | backup folder on Desktop            |
+| `/absolute/path/to/folder` | Absolute path                       |
+| `C:\Users\Name\Documents`  | Windows absolute path               |
+| _(empty)_                  | Prompt for destination each time    |
 
 ## Examples
 
