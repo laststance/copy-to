@@ -2,7 +2,7 @@
   "name": "copy-to",
   "displayName": "Copy to",
   "description": "Copy selected files/folders to a configurable destination from File Explorer context menu",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "laststance",
   "license": "ISC",
   "keywords": [
@@ -11,6 +11,13 @@
     "folder",
     "explorer",
     "context menu"
+  ],
+  "files": [
+    "dist",
+    "images/icon.png",
+    "LICENSE",
+    "README.md",
+    "package.json"
   ],
   "galleryBanner": {
     "color": "#1e1e1e",
