@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import * as os from 'os';
-import * as path from 'path';
+import * as vscode from 'vscode'
+import * as os from 'os'
+import * as path from 'path'
 
 /**
  * Resolves ~ to home directory in a path string.
@@ -14,9 +14,9 @@ import * as path from 'path';
  */
 function resolvePath(inputPath: string): string {
   if (inputPath.startsWith('~')) {
-    return path.join(os.homedir(), inputPath.slice(1));
+    return path.join(os.homedir(), inputPath.slice(1))
   }
-  return inputPath;
+  return inputPath
 }
 
 /**
@@ -33,13 +33,13 @@ function resolvePath(inputPath: string): string {
  * // User cancels => undefined
  */
 async function getDestinationUri(): Promise<vscode.Uri | undefined> {
-  const config = vscode.workspace.getConfiguration('copyTo');
-  const configuredPath = config.get<string>('destinationPath', '');
+  const config = vscode.workspace.getConfiguration('copyTo')
+  const configuredPath = config.get<string>('destinationPath', '')
 
   if (configuredPath) {
     // Use configured path
-    const resolvedPath = resolvePath(configuredPath);
-    return vscode.Uri.file(resolvedPath);
+    const resolvedPath = resolvePath(configuredPath)
+    return vscode.Uri.file(resolvedPath)
   }
 
   // No configured path - prompt user to select destination
@@ -49,13 +49,13 @@ async function getDestinationUri(): Promise<vscode.Uri | undefined> {
     canSelectMany: false,
     openLabel: 'Select Destination',
     title: 'Select destination folder for copy',
-  });
+  })
 
   if (selected && selected.length > 0) {
-    return selected[0];
+    return selected[0]
   }
 
-  return undefined;
+  return undefined
 }
 
 /**
@@ -69,20 +69,22 @@ async function getDestinationUri(): Promise<vscode.Uri | undefined> {
  * @example
  * await ensureDestinationDirectory(destUri); // => true (directory created)
  */
-async function ensureDestinationDirectory(destUri: vscode.Uri): Promise<boolean> {
+async function ensureDestinationDirectory(
+  destUri: vscode.Uri,
+): Promise<boolean> {
   try {
-    await vscode.workspace.fs.stat(destUri);
-    return true;
+    await vscode.workspace.fs.stat(destUri)
+    return true
   } catch {
     // Directory doesn't exist, create it
     try {
-      await vscode.workspace.fs.createDirectory(destUri);
-      return true;
+      await vscode.workspace.fs.createDirectory(destUri)
+      return true
     } catch (createError) {
       vscode.window.showErrorMessage(
-        `Failed to create destination directory: ${createError}`
-      );
-      return false;
+        `Failed to create destination directory: ${createError}`,
+      )
+      return false
     }
   }
 }
@@ -100,15 +102,15 @@ async function ensureDestinationDirectory(destUri: vscode.Uri): Promise<boolean>
  */
 async function targetExists(targetUri: vscode.Uri): Promise<boolean> {
   try {
-    await vscode.workspace.fs.stat(targetUri);
-    return true;
+    await vscode.workspace.fs.stat(targetUri)
+    return true
   } catch {
-    return false;
+    return false
   }
 }
 
 /** User action for conflict resolution */
-type OverwriteAction = 'overwrite' | 'skip' | 'cancel';
+type OverwriteAction = 'overwrite' | 'skip' | 'cancel'
 
 /**
  * Prompts user for confirmation when target file already exists.
@@ -128,32 +130,32 @@ type OverwriteAction = 'overwrite' | 'skip' | 'cancel';
  */
 async function promptOverwrite(
   fileName: string,
-  destPath: string
+  destPath: string,
 ): Promise<OverwriteAction> {
-  const overwrite = 'Overwrite';
-  const skip = 'Skip';
-  const cancel = 'Cancel';
+  const overwrite = 'Overwrite'
+  const skip = 'Skip'
+  const cancel = 'Cancel'
 
   const result = await vscode.window.showWarningMessage(
     `"${fileName}" already exists in ${destPath}. What would you like to do?`,
     { modal: true },
     overwrite,
     skip,
-    cancel
-  );
+    cancel,
+  )
 
   switch (result) {
     case overwrite:
-      return 'overwrite';
+      return 'overwrite'
     case skip:
-      return 'skip';
+      return 'skip'
     default:
-      return 'cancel';
+      return 'cancel'
   }
 }
 
 /** Result of single item copy operation */
-type CopyResult = 'success' | 'skipped' | 'cancelled';
+type CopyResult = 'success' | 'skipped' | 'cancelled'
 
 /**
  * Copies a single file or folder to destination.
@@ -171,32 +173,32 @@ type CopyResult = 'success' | 'skipped' | 'cancelled';
  */
 async function copySingleItem(
   sourceUri: vscode.Uri,
-  destUri: vscode.Uri
+  destUri: vscode.Uri,
 ): Promise<CopyResult> {
-  const fileName = path.basename(sourceUri.fsPath);
-  const targetUri = vscode.Uri.joinPath(destUri, fileName);
+  const fileName = path.basename(sourceUri.fsPath)
+  const targetUri = vscode.Uri.joinPath(destUri, fileName)
 
   // Check for existing file
   if (await targetExists(targetUri)) {
-    const action = await promptOverwrite(fileName, destUri.fsPath);
+    const action = await promptOverwrite(fileName, destUri.fsPath)
 
     if (action === 'cancel') {
-      return 'cancelled';
+      return 'cancelled'
     }
 
     if (action === 'skip') {
-      return 'skipped';
+      return 'skipped'
     }
 
     // action === 'overwrite': proceed with copy
   }
 
   try {
-    await vscode.workspace.fs.copy(sourceUri, targetUri, { overwrite: true });
-    return 'success';
+    await vscode.workspace.fs.copy(sourceUri, targetUri, { overwrite: true })
+    return 'success'
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to copy "${fileName}": ${error}`);
-    return 'skipped';
+    vscode.window.showErrorMessage(`Failed to copy "${fileName}": ${error}`)
+    return 'skipped'
   }
 }
 
@@ -210,11 +212,11 @@ async function copySingleItem(
  * formatDestinationForDisplay('/Users/john/utils'); // => '~/utils'
  */
 function formatDestinationForDisplay(destPath: string): string {
-  const homedir = os.homedir();
+  const homedir = os.homedir()
   if (destPath.startsWith(homedir)) {
-    return '~' + destPath.slice(homedir.length);
+    return '~' + destPath.slice(homedir.length)
   }
-  return destPath;
+  return destPath
 }
 
 /**
@@ -236,40 +238,109 @@ function formatDestinationForDisplay(destPath: string): string {
  *   vscode.Uri.file('/path/to/folder'),
  * ]);
  */
+/**
+ * Copies files to a specific preset destination.
+ * Unlike copyToDestination, this uses a provided path directly instead of
+ * reading from settings or prompting the user.
+ *
+ * @param uris - Array of source file/folder Uris
+ * @param presetPath - Destination path from preset configuration
+ * @param presetLabel - Display label for the preset (for status messages)
+ *
+ * @returns
+ * - void: Operation completed (with success/skip/cancel messaging)
+ *
+ * @example
+ * await copyToPreset(
+ *   [vscode.Uri.file('/path/to/file.ts')],
+ *   '~/Downloads',
+ *   'Downloads'
+ * );
+ */
+export async function copyToPreset(
+  uris: vscode.Uri[],
+  presetPath: string,
+  presetLabel: string,
+): Promise<void> {
+  // Resolve path (handle ~)
+  const resolvedPath = resolvePath(presetPath)
+  const destUri = vscode.Uri.file(resolvedPath)
+
+  // Ensure destination exists
+  if (!(await ensureDestinationDirectory(destUri))) {
+    return
+  }
+
+  const displayPath = formatDestinationForDisplay(destUri.fsPath)
+  let copiedCount = 0
+  let skippedCount = 0
+
+  for (const uri of uris) {
+    const result = await copySingleItem(uri, destUri)
+
+    switch (result) {
+      case 'success':
+        copiedCount++
+        break
+      case 'skipped':
+        skippedCount++
+        break
+      case 'cancelled':
+        vscode.window.showInformationMessage(
+          `Cancelled. Copied ${copiedCount} item(s), skipped ${skippedCount}.`,
+        )
+        return
+    }
+  }
+
+  // Show completion message with preset label
+  if (copiedCount > 0) {
+    const message =
+      skippedCount > 0
+        ? `Copied ${copiedCount} item(s) to ${presetLabel} (${displayPath}). Skipped ${skippedCount}.`
+        : `Copied ${copiedCount} item(s) to ${presetLabel} (${displayPath}).`
+    vscode.window.showInformationMessage(message)
+  } else if (skippedCount > 0) {
+    vscode.window.showInformationMessage(
+      `All ${skippedCount} item(s) were skipped.`,
+    )
+  }
+}
+
 export async function copyToDestination(uris: vscode.Uri[]): Promise<void> {
   // Get destination (from settings or user selection)
-  const destUri = await getDestinationUri();
+  const destUri = await getDestinationUri()
 
   if (!destUri) {
     // User cancelled folder selection
-    return;
+    return
   }
 
   // Ensure destination exists
   if (!(await ensureDestinationDirectory(destUri))) {
-    return;
+    return
   }
 
-  const displayPath = formatDestinationForDisplay(destUri.fsPath);
-  let copiedCount = 0;
-  let skippedCount = 0;
+  const displayPath = formatDestinationForDisplay(destUri.fsPath)
+  let copiedCount = 0
+  let skippedCount = 0
 
   for (const uri of uris) {
-    const result = await copySingleItem(uri, destUri);
+    const result = await copySingleItem(uri, destUri)
 
     switch (result) {
       case 'success':
-        copiedCount++;
-        break;
+        copiedCount++
+        break
       case 'skipped':
-        skippedCount++;
-        break;
+        skippedCount++
+        break
       case 'cancelled':
         // User cancelled - stop processing
         vscode.window.showInformationMessage(
-          `Cancelled. Copied ${copiedCount} item(s), skipped ${skippedCount}.`
-        );
-        return;
+          `Cancelled. Copied ${copiedCount} item(s), skipped ${skippedCount}.`,
+        )
+        return
     }
   }
 
@@ -278,11 +349,11 @@ export async function copyToDestination(uris: vscode.Uri[]): Promise<void> {
     const message =
       skippedCount > 0
         ? `Copied ${copiedCount} item(s) to ${displayPath}. Skipped ${skippedCount}.`
-        : `Copied ${copiedCount} item(s) to ${displayPath}.`;
-    vscode.window.showInformationMessage(message);
+        : `Copied ${copiedCount} item(s) to ${displayPath}.`
+    vscode.window.showInformationMessage(message)
   } else if (skippedCount > 0) {
     vscode.window.showInformationMessage(
-      `All ${skippedCount} item(s) were skipped.`
-    );
+      `All ${skippedCount} item(s) were skipped.`,
+    )
   }
 }
