@@ -10,39 +10,82 @@ interface PresetConfig {
 /** Maximum number of presets supported */
 const MAX_PRESETS = 8
 
+/** QuickPick item for preset selection */
+interface PresetQuickPickItem extends vscode.QuickPickItem {
+  preset?: PresetConfig
+  isBrowse?: boolean
+}
+
 /**
- * Updates context keys for conditional menu visibility.
- * Called on activation and when configuration changes.
+ * Shows QuickPick UI for selecting copy destination.
+ * Displays configured presets with their labels and a "Browse..." option.
+ *
+ * @param targets - Array of source file/folder Uris
  *
  * @example
- * // Sets context keys like:
- * // copyTo.preset1Configured = true (if preset 1 exists)
- * // copyTo.preset2Configured = false (if preset 2 doesn't exist)
+ * await showPresetQuickPick([vscode.Uri.file('/path/to/file.ts')]);
+ * // Shows: [Universal, Node, Next React, ..., Browse...]
  */
-function updatePresetContexts(): void {
+async function showPresetQuickPick(targets: vscode.Uri[]): Promise<void> {
   const config = vscode.workspace.getConfiguration('copyTo')
   const presets = config.get<PresetConfig[]>('presets', [])
 
-  // Set context for each preset slot
-  for (let i = 0; i < MAX_PRESETS; i++) {
-    const hasPreset = presets[i]?.path ? true : false
-    vscode.commands.executeCommand(
-      'setContext',
-      `copyTo.preset${i + 1}Configured`,
-      hasPreset,
-    )
+  // Build QuickPick items
+  const items: PresetQuickPickItem[] = []
+
+  // Add configured presets
+  for (const preset of presets) {
+    if (preset?.label && preset?.path) {
+      items.push({
+        label: `$(folder) ${preset.label}`,
+        description: preset.path,
+        preset,
+      })
+    }
+  }
+
+  // Add separator and Browse option
+  if (items.length > 0) {
+    items.push({
+      label: '',
+      kind: vscode.QuickPickItemKind.Separator,
+    })
+  }
+
+  items.push({
+    label: '$(folder-opened) Browse...',
+    description: 'Select a folder',
+    isBrowse: true,
+  })
+
+  // Show QuickPick
+  const selected = await vscode.window.showQuickPick(items, {
+    placeHolder: 'Select destination',
+    title: 'Copy to...',
+  })
+
+  if (!selected) {
+    return // User cancelled
+  }
+
+  if (selected.isBrowse) {
+    // Use original copyToDestination (shows folder picker)
+    await copyToDestination(targets)
+  } else if (selected.preset) {
+    // Copy to selected preset
+    await copyToPreset(targets, selected.preset.path, selected.preset.label)
   }
 }
 
 /**
- * Creates command handler for a preset slot.
+ * Creates command handler for a preset slot (keyboard shortcut).
  *
  * @param presetIndex - Zero-based index of the preset (0-7)
  * @returns Command handler function that copies files to the preset destination
  *
  * @example
  * const handler = createPresetHandler(0); // Handler for Preset 1
- * // When invoked, copies selected files to preset[0].path
+ * // When invoked via Cmd+Shift+C 1, copies selected files to preset[0].path
  */
 function createPresetHandler(
   presetIndex: number,
@@ -85,18 +128,7 @@ function createPresetHandler(
  * // - User uses keyboard shortcut
  */
 export function activate(context: vscode.ExtensionContext): void {
-  // Update contexts on activation
-  updatePresetContexts()
-
-  // Watch for configuration changes
-  const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration('copyTo.presets')) {
-      updatePresetContexts()
-    }
-  })
-  context.subscriptions.push(configWatcher)
-
-  // Register original command (backward compatible - Browse functionality)
+  // Register main command with QuickPick UI
   const copyToDestinationCmd = vscode.commands.registerCommand(
     'copy-to.copyToDestination',
     async (uri: vscode.Uri | undefined, uris: vscode.Uri[] | undefined) => {
@@ -110,7 +142,7 @@ export function activate(context: vscode.ExtensionContext): void {
         return
       }
 
-      await copyToDestination(targets)
+      await showPresetQuickPick(targets)
     },
   )
   context.subscriptions.push(copyToDestinationCmd)

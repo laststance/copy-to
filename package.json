@@ -2,7 +2,7 @@
   "name": "copy-to",
   "displayName": "Copy to",
   "description": "Copy selected files/folders to a configurable destination from File Explorer context menu",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "laststance",
   "license": "ISC",
   "keywords": [
@@ -39,23 +39,14 @@
   ],
   "icon": "images/icon.png",
   "activationEvents": [
-    "onCommand:copy-to.copyToDestination",
-    "onCommand:copy-to.copyToPreset1",
-    "onCommand:copy-to.copyToPreset2",
-    "onCommand:copy-to.copyToPreset3",
-    "onCommand:copy-to.copyToPreset4",
-    "onCommand:copy-to.copyToPreset5",
-    "onCommand:copy-to.copyToPreset6",
-    "onCommand:copy-to.copyToPreset7",
-    "onCommand:copy-to.copyToPreset8"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "copy-to.copyToDestination",
-        "title": "Copy to...",
-        "shortTitle": "Browse..."
+        "title": "Copy to..."
       },
       {
         "command": "copy-to.copyToPreset1",
@@ -90,64 +81,12 @@
         "title": "Copy to Preset 8"
       }
     ],
-    "submenus": [
-      {
-        "id": "copy-to.submenu",
-        "label": "Copy to..."
-      }
-    ],
     "menus": {
       "explorer/context": [
         {
-          "submenu": "copy-to.submenu",
+          "command": "copy-to.copyToDestination",
           "when": "explorerResourceIsFolder || !explorerResourceIsRoot",
           "group": "7_modification"
-        }
-      ],
-      "copy-to.submenu": [
-        {
-          "command": "copy-to.copyToPreset1",
-          "when": "copyTo.preset1Configured",
-          "group": "1_presets@1"
-        },
-        {
-          "command": "copy-to.copyToPreset2",
-          "when": "copyTo.preset2Configured",
-          "group": "1_presets@2"
-        },
-        {
-          "command": "copy-to.copyToPreset3",
-          "when": "copyTo.preset3Configured",
-          "group": "1_presets@3"
-        },
-        {
-          "command": "copy-to.copyToPreset4",
-          "when": "copyTo.preset4Configured",
-          "group": "1_presets@4"
-        },
-        {
-          "command": "copy-to.copyToPreset5",
-          "when": "copyTo.preset5Configured",
-          "group": "1_presets@5"
-        },
-        {
-          "command": "copy-to.copyToPreset6",
-          "when": "copyTo.preset6Configured",
-          "group": "1_presets@6"
-        },
-        {
-          "command": "copy-to.copyToPreset7",
-          "when": "copyTo.preset7Configured",
-          "group": "1_presets@7"
-        },
-        {
-          "command": "copy-to.copyToPreset8",
-          "when": "copyTo.preset8Configured",
-          "group": "1_presets@8"
-        },
-        {
-          "command": "copy-to.copyToDestination",
-          "group": "2_browse@1"
         }
       ]
     },
